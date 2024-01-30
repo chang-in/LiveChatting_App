@@ -1,9 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { Layout, Flex } from "antd";
 import Chat from "./components/chat";
+import Screen from "./components/screen";
 const { Header, Footer, Sider, Content } = Layout;
-
-// import "./App.scss";
 
 function App() {
   return (
@@ -20,7 +19,8 @@ function App() {
             Sider
           </Sider>
           <Content className="body">
-            <Chat />
+            <Screen />
+            {/* <Chat /> */}
           </Content>
         </Layout>
         <Footer className="footer">Footer</Footer>
