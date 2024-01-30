@@ -11,7 +11,12 @@ function App() {
       <Layout className="App">
         <Header className="header">Header</Header>
         <Layout>
-          <Sider className="sidebar" width="25%">
+          <Sider
+            className="sidebar"
+            width="25%"
+            breakpoint="lg"
+            collapsedWidth="0"
+          >
             Sider
           </Sider>
           <Content className="body">
@@ -21,12 +26,6 @@ function App() {
         <Footer className="footer">Footer</Footer>
       </Layout>
     </Flex>
-    // <div className="App">
-    //   <h1>Index Component</h1>
-    //   <Routes>
-    //     <Route path="/" element={<Chat />} />
-    //   </Routes>
-    // </div>
   );
 }
 

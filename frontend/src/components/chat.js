@@ -1,7 +1,6 @@
 import { Button, Form, Input } from "antd";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
-
 export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [form] = useForm();
