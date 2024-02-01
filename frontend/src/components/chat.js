@@ -1,69 +1,45 @@
-import { Button, Form, Input } from "antd";
-import { useState } from "react";
-import { useForm } from "antd/es/form/Form";
-export default function Chat() {
-  const [messages, setMessages] = useState([]);
-  const [form] = useForm();
+import React, { useState, useEffect } from "react";
 
-  const onFinish = (values) => {
-    const { chat } = values;
-    setMessages((prev) => [...prev, { 창인: chat }]);
-    scrollToBottom();
-    // console.log(messages);
-    form.resetFields();
+function Chat() {
+  const [messages, setMessages] = useState([]);
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const newSocket = new WebSocket("ws://localhost:8000/ws");
+    newSocket.addEventListener("message", (event) => {
+      addMessage(event.data, "server");
+    });
+    setSocket(newSocket);
+    return () => newSocket.close();
+  }, []);
+
+  const addMessage = (message, sender) => {
+    setMessages((prevMessages) => [...prevMessages, { sender, message }]);
   };
 
-  const scrollToBottom = () => {
-    const chatdisplay = document.querySelector(".content");
-    chatdisplay.scrollTop = chatdisplay.scrollHeight;
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const message = event.target.message.value;
+    addMessage(message, "client");
+    socket.send(message);
+    event.target.reset();
   };
 
   return (
-    <>
-      <div className="content">
-        {messages.map((item, index) => (
-          <ul key={index}>
-            <li
-              style={{
-                listStyleType: "none",
-                marginRight: "10px",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              key={index}
-            >
-              {item.창인} :{" "}
-              <img
-                style={{
-                  border: "1px solid",
-                  borderRadius: "50%",
-                  width: "35px",
-                  height: "35px",
-                }}
-                src={
-                  "https://img.khan.co.kr/news/2017/08/22/l_2017082301002927300235691.jpg"
-                }
-                alt={"아이콘"}
-              />
-            </li>
-          </ul>
+    <div>
+      <form id="form" onSubmit={handleSubmit}>
+        <input type="text" id="message" />
+        <button type="submit">Send</button>
+      </form>
+      <div>
+        {messages.map((msg, index) => (
+          <p key={index}>
+            {msg.sender}: {msg.message}
+          </p>
         ))}
       </div>
-      <Form
-        form={form}
-        className="input"
-        onFinish={onFinish}
-        autoComplete="off"
-      >
-        <Form.Item name="chat">
-          <Input style={{ width: "100%" }} />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            보내기
-          </Button>
-        </Form.Item>
-      </Form>
-    </>
+    </div>
   );
 }
+
+export default Chat;

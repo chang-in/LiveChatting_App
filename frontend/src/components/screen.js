@@ -1,58 +1,112 @@
 import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
+import { Form, Input, Button } from "antd";
+import { Message } from "./message";
+const socket = io(process.env.REACT_APP_API_URL, {
+  path: process.env.REACT_APP_SOCKET_PATH,
+});
 
-function Chat() {
-  const [socket, setSocket] = useState(null);
+export default function Screen() {
+  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [user, setUser] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
+  const [form] = Form.useForm();
+  const [usrcount, setUsrcount] = useState(0);
 
-  // 웹소켓 연결 열기
   useEffect(() => {
-    const newSocket = new WebSocket("ws://localhost:8000/ws");
-    setSocket(newSocket);
-
-    newSocket.addEventListener("open", (event) => {
-      console.log("WebSocket connection opened.");
+    // 소켓에 연결되면 실행
+    socket.on("connect", () => {
+      setIsConnected(socket.connected);
     });
 
-    newSocket.addEventListener("message", (event) => {
-      // 서버로부터 메시지를 받으면 상태 업데이트
-      addMessage(event.data, "server");
+    socket.on("join", (data) => {
+      setUser(() => [
+        {
+          ...data,
+          type: "join",
+          id: data.sid === socket.id ? 1 : 2,
+          sender: data.sid === socket.id ? "나" : "상대",
+        },
+      ]);
+      setUsrcount(usrcount + 1);
     });
 
-    // 컴포넌트 언마운트 시 웹소켓 연결 닫기
+    socket.on("message", (data) => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          ...data,
+          type: "message",
+          sender: data.sid === socket.id ? "나" : "상대",
+        },
+      ]);
+      // console.log("messages : ", messages);
+    });
+
+    socket.on("disconnect", (sid) => {
+      // setUser((prev) => prev.filter((user) => user.sid !== sid));
+      setUsrcount(usrcount - 1);
+      setIsConnected(socket.connected);
+    });
+
+    console.log(messages);
     return () => {
-      newSocket.close();
+      socket.close();
     };
   }, []);
 
-  // 메시지 추가 함수
-  const addMessage = (message, sender) => {
-    setMessages((prevMessages) => [...prevMessages, { message, sender }]);
+  // user.map((data, index) => console.log(data));
+  // console.log(user);
+
+  const onFinish = (values) => {
+    const { chat } = values;
+    // setMessages(prevchat.trim());
+    socket.emit("message", chat);
+    // console.log(messages);
+    form.resetFields();
+    scrollToBottom();
   };
 
-  // 폼 제출 핸들러
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const message = event.target.message.value;
-    addMessage(message, "client");
-    socket.send(message);
-    event.target.reset();
+  const scrollToBottom = () => {
+    const chatDisplay = document.querySelector(".content");
+    chatDisplay.scrollTop = chatDisplay.scrollHeight;
   };
+
+  // const countusr = () => {
+  //   for (const s of user) {
+  //     setCountuser(countuser + 1);
+  //   }
+  //   return countuser;
+  // };
+
+  // countusr();
 
   return (
     <div>
-      <form id="form" onSubmit={handleSubmit}>
-        <input type="text" id="message" />
-        <button type="submit">Send</button>
-      </form>
-      <ul>
+      <div className="content">
+        <h2>status : {isConnected ? "connect" : "disconnect"}</h2>
+        <p>유저 수 : {usrcount}</p>
         {messages.map((msg, index) => (
-          <li key={index} className={msg.sender}>
-            {msg.sender}: {msg.message}
-          </li>
+          <Message message={msg} {...message} key={index} />
         ))}
-      </ul>
+      </div>
+      <Form form={form} onFinish={onFinish} autoComplete="off">
+        <Form.Item name="chat">
+          <Input
+            onChange={(e) => {
+              const value = e.target.value;
+              setMessage(value);
+              // console.log(message);
+            }}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            보내기
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
 }
-
-export default Chat;

@@ -1,7 +1,8 @@
+import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Layout, Flex } from "antd";
-import Chat from "./components/chat";
 import Screen from "./components/screen";
+import Test from "./components/test";
 const { Header, Footer, Sider, Content } = Layout;
 
 function App() {
@@ -19,8 +20,10 @@ function App() {
             Sider
           </Sider>
           <Content className="body">
+            {/* <Test /> */}
+            {/* <Socketio /> */}
             <Screen />
-            {/* <Chat /> */}
+            {/* <Chats /> */}
           </Content>
         </Layout>
         <Footer className="footer">Footer</Footer>
