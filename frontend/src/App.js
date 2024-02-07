@@ -1,34 +1,24 @@
-import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Layout, Flex } from "antd";
-import Screen from "./components/screen";
-import Test from "./components/test";
-const { Header, Footer, Sider, Content } = Layout;
+import { Provider } from "react-redux";
+import Structure from "./components/Structure";
+import ChatRoom from "./components/ChatRoom";
+import Chat from "./components/Chat";
+import UserList from "./utils/UserList";
+import Test from "./components/Test";
+// import { store } from "./utils/store";
 
-function App() {
+function App({ sidebarcontent, maincontent }) {
   return (
-    <Flex gap="middle" wrap="wrap">
-      <Layout className="App">
-        <Header className="header">Header</Header>
-        <Layout>
-          <Sider
-            className="sidebar"
-            width="25%"
-            breakpoint="lg"
-            collapsedWidth="0"
-          >
-            Sider
-          </Sider>
-          <Content className="body">
-            {/* <Test /> */}
-            {/* <Socketio /> */}
-            <Screen />
-            {/* <Chats /> */}
-          </Content>
-        </Layout>
-        <Footer className="footer">Footer</Footer>
-      </Layout>
-    </Flex>
+    // <Provider store={store}>
+    <Structure
+      sidebarcontent={<ChatRoom />}
+      maincontent={
+        // <UserList />
+        <Test />
+        // <Chat />
+      }
+    ></Structure>
+    // </Provider>
   );
 }
 

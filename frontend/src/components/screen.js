@@ -1,112 +1,11 @@
-import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
-import { Form, Input, Button } from "antd";
-import { Message } from "./message";
-const socket = io(process.env.REACT_APP_API_URL, {
-  path: process.env.REACT_APP_SOCKET_PATH,
-});
+import { Message } from "./Message";
 
-export default function Screen() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [user, setUser] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState("");
-  const [form] = Form.useForm();
-  const [usrcount, setUsrcount] = useState(0);
-
-  useEffect(() => {
-    // 소켓에 연결되면 실행
-    socket.on("connect", () => {
-      setIsConnected(socket.connected);
-    });
-
-    socket.on("join", (data) => {
-      setUser(() => [
-        {
-          ...data,
-          type: "join",
-          id: data.sid === socket.id ? 1 : 2,
-          sender: data.sid === socket.id ? "나" : "상대",
-        },
-      ]);
-      setUsrcount(usrcount + 1);
-    });
-
-    socket.on("message", (data) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          ...data,
-          type: "message",
-          sender: data.sid === socket.id ? "나" : "상대",
-        },
-      ]);
-      // console.log("messages : ", messages);
-    });
-
-    socket.on("disconnect", (sid) => {
-      // setUser((prev) => prev.filter((user) => user.sid !== sid));
-      setUsrcount(usrcount - 1);
-      setIsConnected(socket.connected);
-    });
-
-    console.log(messages);
-    return () => {
-      socket.close();
-    };
-  }, []);
-
-  // user.map((data, index) => console.log(data));
-  // console.log(user);
-
-  const onFinish = (values) => {
-    const { chat } = values;
-    // setMessages(prevchat.trim());
-    socket.emit("message", chat);
-    // console.log(messages);
-    form.resetFields();
-    scrollToBottom();
-  };
-
-  const scrollToBottom = () => {
-    const chatDisplay = document.querySelector(".content");
-    chatDisplay.scrollTop = chatDisplay.scrollHeight;
-  };
-
-  // const countusr = () => {
-  //   for (const s of user) {
-  //     setCountuser(countuser + 1);
-  //   }
-  //   return countuser;
-  // };
-
-  // countusr();
-
+export default function Screen({ messages }) {
   return (
-    <div>
-      <div className="content">
-        <h2>status : {isConnected ? "connect" : "disconnect"}</h2>
-        <p>유저 수 : {usrcount}</p>
-        {messages.map((msg, index) => (
-          <Message message={msg} {...message} key={index} />
-        ))}
-      </div>
-      <Form form={form} onFinish={onFinish} autoComplete="off">
-        <Form.Item name="chat">
-          <Input
-            onChange={(e) => {
-              const value = e.target.value;
-              setMessage(value);
-              // console.log(message);
-            }}
-          />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            보내기
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+    <>
+      {messages.map((msg, index) => (
+        <Message message={msg} {...messages} key={index} />
+      ))}
+    </>
   );
 }
