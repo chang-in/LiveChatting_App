@@ -1,75 +1,87 @@
-import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
+import { useEffect, useState, useRef } from "react";
 import { Form, Input, Button } from "antd";
 import { Message } from "./Message";
+import { useStore } from "../utils/store";
+import { io } from "socket.io-client";
+import { generateRandomNumber } from "../hooks/GenerateRandomNumber";
+import ChatRoom from "./ChatRoom";
+import uuid from "react-uuid";
 import Screen from "./Screen";
-const socket = io(process.env.REACT_APP_API_URL, {
-  path: process.env.REACT_APP_SOCKET_PATH,
-});
+import { NULL } from "node-sass";
 
-export default function Chat() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [user, setUser] = useState([]);
+export default function Chat({ isChatting, setIsChatting }) {
+  const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [form] = Form.useForm();
-  const [usrcount, setUsrcount] = useState(0);
-  const [rooms, setRoom] = useState([]);
+  const {
+    currentsocket,
+    setCurrentSocket,
+    random,
+    setRandom,
+    roomdata,
+    setroomdata,
+  } = useStore();
 
   useEffect(() => {
-    // 소켓에 연결되면 실행
-    socket.on("connect", () => {
+    const socket = io("http://localhost:9000", {
+      path: "/sockets",
+    });
+    setCurrentSocket(socket);
+
+    // 소켓 서버와 연결 동시에 채팅 방 가입
+    socket.on("connect", (data) => {
       setIsConnected(socket.connected);
+      setroomdata(random);
+      socket.emit("join_room", random); // 방을 생성하기 위해 해당 컴포넌트(생성될 방 이름) 서버에 전달
     });
 
-    socket.on("join", (data) => {
-      setUser(() => [
-        {
-          ...data,
-          type: "join",
-          id: data.sid === socket.id ? 1 : 2,
-          sender: data.sid === socket.id ? "나" : "상대",
-        },
-      ]);
-      setUsrcount(usrcount + 1);
-    });
+    const joinRoom = (roomname) => {
+      socket.emit("join_room", roomname);
+    };
 
-    // socket.on("join_room", (data) => {
-    //   console.log(data);
+    // 에러 처리 -> 사용자 두명만 받을 수 있는 에러처리
+    // socket.on("error", (errorMessage) => {
+    //   console.log("에러 메세지 : ", errorMessage);
+
+    //   if (errorMessage.includes("is full")) {
+    //     setRandom(generateRandomNumber());
+    //   }
     // });
 
-    socket.on("message", (data) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          ...data,
-          type: "message",
-          sender: data.sid === socket.id ? "나" : "상대",
-        },
-      ]);
-      // console.log("messages : ", messages);
+    // 채팅 방 정보 수신
+    socket.on("room_data", (data) => {
+      console.log(data);
     });
 
-    socket.on("disconnect", (sid) => {
-      // setUser((prev) => prev.filter((user) => user.sid !== sid));
-      setUsrcount(usrcount - 1);
-      setIsConnected(socket.connected);
+    // 주고 받는 메세지 수신
+    socket.on("room_message", (data) => {
+      // for (let item of data) {
+      //   item.sender === currentsocket.id
+      //     ? setMessages((prev) => [...prev, { ...item }])
+      //     : console.log("데이터 수신이 제대로 안됨");
+      // }
+      console.log(messages);
     });
 
-    // console.log(messages);
+    // 서버와의 연결 끊김(언마운트 or 새로고침)
+    socket.on("disconnect", (data) => {
+      console.log("서버와의 연결이 종료됩니다");
+    });
+
     return () => {
+      // 소켓 서버와의 연결 종료
       socket.close();
     };
   }, []);
 
-  // user.map((data, index) => console.log(data));
-  // console.log(user);
-
   const onFinish = (values) => {
     const { chat } = values;
-    // setMessages(prevchat.trim());
-    socket.emit("message", chat);
-    // console.log(messages);
+    // setMessage(chat);
+    currentsocket.emit("send_room_message", {
+      room_name: random,
+      message: chat,
+    });
     form.resetFields();
     scrollToBottom();
   };
@@ -79,29 +91,25 @@ export default function Chat() {
     chatDisplay.scrollTop = chatDisplay.scrollHeight;
   };
 
-  // const countusr = () => {
-  //   for (const s of user) {
-  //     setCountuser(countuser + 1);
-  //   }
-  //   return countuser;
-  // };
-
-  // countusr();
-
   return (
     <div>
+      <h1>status : {isConnected ? "true" : "false"}</h1>
+      <h1>컴포넌트 ID : {random}</h1>
+      {/* <ChatRoom room={ref.current} />; */}
       <div className="content">
         <h2>status : {isConnected ? "connect" : "disconnect"}</h2>
-        <p>유저 수 : {usrcount}</p>
-        <Screen messages={messages} />
+        {/* {messages.map((msg, index) => (
+          <Message message={msg} {...messages.message} key={index} />
+        ))} */}
       </div>
+
       <Form form={form} onFinish={onFinish} autoComplete="off">
         <Form.Item name="chat">
           <Input
             onChange={(e) => {
-              const value = e.target.value;
-              setMessage(value);
-              // console.log(message);
+              e.target.value
+                ? console.log("입력중...")
+                : console.log("채팅을 입력하세요");
             }}
           />
         </Form.Item>

@@ -4,21 +4,21 @@ import Structure from "./components/Structure";
 import ChatRoom from "./components/ChatRoom";
 import Chat from "./components/Chat";
 import UserList from "./utils/UserList";
-import Test from "./components/Test";
-// import { store } from "./utils/store";
+// import Test from "./components/Chat";
+import First from "./components/Start";
+import Screen from "./components/Screen";
+import { useStore } from "./utils/store";
 
 function App({ sidebarcontent, maincontent }) {
+  const { roomdata } = useStore();
+
   return (
-    // <Provider store={store}>
-    <Structure
-      sidebarcontent={<ChatRoom />}
-      maincontent={
-        // <UserList />
-        <Test />
-        // <Chat />
-      }
-    ></Structure>
-    // </Provider>
+    <Structure sidebarcontent={<ChatRoom />} maincontent={<Screen />}>
+      <Routes>
+        <Route path="/" element={<Screen />} />
+        <Route path={`/history/${roomdata}`} element={<Chat />} />
+      </Routes>
+    </Structure>
   );
 }
 
