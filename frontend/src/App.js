@@ -4,7 +4,7 @@ import Structure from "./components/Structure";
 import ChatRoom from "./components/ChatRoom";
 import Chat from "./components/Chat";
 import UserList from "./utils/UserList";
-// import Test from "./components/Chat";
+import Test from "./components/Test";
 import First from "./components/Start";
 import Screen from "./components/Screen";
 import { useStore } from "./utils/store";

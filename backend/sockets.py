@@ -5,6 +5,7 @@ import redis
 import database
 import datetime as dt
 import aioredis
+import json
 
 # redis_client = redis.Redis(host="localhost", port=6379, db=0)
 
@@ -41,72 +42,89 @@ app.add_middleware(
 @sio.event
 async def connect(sid, environ):
     print(f"Socket connected : {sid}")
+    await sio.emit("connect_data", {"sid": sid})
 
 
-room = {}
+# 배열이면 반복문 사용해야함
+rooms = {}
 
 
-# 채팅 시작 버튼 눌렀을 때 sid는 본인
 @sio.event
 async def join_room(sid, room_name):
-    if room_name not in room:
-        room[room_name] = []
+    # room_name으로 생성된 방이 없다면
+    if room_name not in rooms:
+        # 값 배열 생성
+        rooms[room_name] = {"users": []}
 
     # 방에 두 명 이상의 사용자가 있는지 확인
-    if len(room[room_name]) >= 2:
+    if len(rooms[room_name]["users"]) >= 2:
         await sio.emit("error", f"{room_name} is full", to=sid)
         return
 
     # 사용자를 방에 추가하고 해당 방으로 입장
-    room[room_name].append(sid)
+    rooms[room_name]["users"].append(sid)
     await sio.enter_room(sid, room_name)
+    print(f"{sid} Enter Room")
 
-    # 채팅방 정보를 클라이언트에게 전송
+    # 채팅방 정보를 클라이언트에게 전송 TODO : redis에서 뿌리도록 설정
     await sio.emit(
-        "room_data", {"room_id": room_name, "users": room[room_name]}, room=room_name
+        "join_data",
+        rooms,
+        room=room_name,
     )
 
-    await redis.set(f"room:{room_name}", str(room[room_name]))
+    await redis.set(f"room:{room_name}", str(rooms[room_name]))
 
 
-messages = {}
+messages = {
+    # "room_name" : [{"sender" : asdfasdf, "message" : asdfksadfsad, "timestamp" : 20123.12414.14},{"sender" : asdfasdf, "message" : asdfksadfsad, "timestamp" : 20123.12414.14}, ...]
+}
 
 
 @sio.event
-async def send_room_message(sid, data):
+async def room_message(sid, data):
+    print(data)
     if "message" in data:
         message = data["message"]
     else:
         return
-    room_name = data["room_name"]
+    currentroom = data["room_name"]
 
-    if not message or not room_name:
+    if not message or not currentroom:  # TODO : 클라이언트에서 이 에러를 처리하도록...
         raise HTTPException(
             status_code=400, detail="Message or room_name missing in request"
         )
 
-    if room_name not in messages:
-        messages[room_name] = []
+    if currentroom not in messages:
+        messages[currentroom] = []
 
-    messages[room_name].append(
-        {"sender": sid, "message": message, "timestamp": dt.datetime.now().isoformat()}
+    timestamp = dt.datetime.now().isoformat()
+    new_message = {"sender": sid, "message": message, "timestamp": timestamp}
+    messages[currentroom].append(new_message)
+
+    await redis.rpush(
+        f"messages:{currentroom}", json.dumps(new_message, ensure_ascii=False)
     )
-    await sio.emit("room_message", messages[room_name])
 
-    await redis.rpush(f"messages:{room_name}", message)
+    await sio.emit(
+        "room_message_data",
+        new_message,
+    )
 
 
 # 채팅 종료 버튼
 @sio.event
-async def leave(sid, room_name):
-    if room_name in room and sid in room[room_name]:
-        room[room_name].remove(sid)
+async def leave_room(sid, room_name):
+    if room_name in rooms and sid in rooms[room_name]["users"]:
+        rooms[room_name]["users"].remove(sid)
         await sio.leave_room(sid, room_name)
+        print(f"{sid} Left Room({room_name})")
 
         # 방이 빈 경우 삭제
-        if not room[room_name]:
-            del room[room_name]
+        if not rooms[room_name]["users"]:
+            del rooms[room_name]
             await sio.close_room(room_name)
+            print(f"{room_name} is deleted.")
 
             await redis.delete(f"room:{room_name}")
 
