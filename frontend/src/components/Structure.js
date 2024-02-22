@@ -11,14 +11,24 @@ export default function Structure({ sidebarcontent, maincontent }) {
         <Header className="header">Header</Header>
         <Layout>
           <Sider
+            trigger={null}
             className="sider"
-            width="25%"
+            width="20%"
             breakpoint="lg"
             collapsedWidth="0"
           >
             {sidebarcontent}
           </Sider>
-          <Content className="content">{maincontent}</Content>
+          <Content>{maincontent}</Content>
+          <Sider
+            trigger={null}
+            className="sider"
+            width="20%"
+            breakpoint="lg"
+            collapsedWidth="0"
+          >
+            {sidebarcontent}
+          </Sider>
         </Layout>
         <Footer className="footer">Footer</Footer>
       </Layout>
