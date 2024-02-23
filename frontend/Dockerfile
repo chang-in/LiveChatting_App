@@ -3,13 +3,10 @@ FROM node:lts as builder
 RUN apt-get update
 # 작업영역을 선택한다. mkdir, cd를 동시에 진행한다 생각하면 된다.
 WORKDIR /code
-# 의존성 파일을 복사한다.
-COPY package.json yarn.lock ./
-# 의존성 설치
-RUN yarn install
 # 애플리케이션의 소스를 복사한다.
-COPY . .
-# 애플리케이션 빌드
+COPY . /code
+# 의존성 패키지 설치
+RUN yarn install
 RUN /bin/sh -c yarn build
 
 # Serve stage
