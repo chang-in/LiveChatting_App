@@ -4,7 +4,6 @@ import { useStore } from "../utils/store";
 import ChatInput from "./ChatInput";
 
 export default function Chat({ isChatting, setIsChatting }) {
-  const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState([]);
   const [form] = Form.useForm();
   const {
@@ -28,7 +27,7 @@ export default function Chat({ isChatting, setIsChatting }) {
       currentsocket.emit("join_room", random);
 
       const alertListener = (data) => console.log(data);
-      currentsocket.on("alert", alertListener);
+      // currentsocket.on("alert", alertListener);
 
       const errorListener = (data) => {
         if (data.includes("is full")) {
@@ -39,7 +38,7 @@ export default function Chat({ isChatting, setIsChatting }) {
       currentsocket.on("error", errorListener);
 
       const messageListener = (data) => {
-        console.log(data);
+        // console.log(data);
         setMessages((prev) => [...prev, data]);
       };
       currentsocket.on("room_message_data", messageListener);

@@ -7,8 +7,6 @@ import { useStore } from "../utils/store";
 import { generateRandomNumber } from "../hooks/GenerateRandomNumber";
 
 export default function Screen() {
-  const [Message, setMessage] = useState("");
-
   const {
     random,
     setRandom,
@@ -22,14 +20,14 @@ export default function Screen() {
   const [isChatting, setIsChatting] = useState(false); // start <-> leave
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:9000", {
-      path: "/sockets",
+    socketRef.current = io(process.env.REACT_APP_API_URL, {
+      path: process.env.SOCKET_PATH,
     });
 
     setCurrentSocket(socketRef.current);
 
     socketRef.current.on("connect", (data) => {
-      console.log("서버와 연결");
+      // console.log("서버와 연결");
     });
 
     return () => {

@@ -12,7 +12,6 @@ import aioredis
 url = "redis://localhost:6379"
 redis = aioredis.Redis()
 
-# redis_other = rd.Redis()
 # redis_manager = socketio.AsyncRedisManager(url)
 # sio = socketio.AsyncServer(
 #     async_mode="asgi", cors_allowed_origins=[], client_manager=redis_manager
@@ -85,25 +84,6 @@ async def room_message(sid, data):
     await sio.emit("room_message_data", new_message, room=currentroom)
 
 
-# # 채팅 종료 버튼
-# @sio.event
-# async def leave_room(sid, room_name):
-#     await redis.lrem(f"room:{room_name}:users", 0, sid)
-#     await sio.leave_room(sid, room_name)
-
-#     if len(decode_room) == 0:
-#         await redis.delete(f"room:{room_name}")
-#         await sio.close_room(room_name)
-#         print(f"{sid} Left Room({room_name})")
-#     # if room_name in rooms and sid in rooms[room_name]["users"]:
-
-#     # 방이 빈 경우 삭제
-#     # if not rooms[room_name]["users"]:
-#     #     del rooms[room_name]
-#     #     print(f"{room_name} is deleted.")
-#     #     await redis.delete(f"room:{room_name}")
-
-
 @sio.event
 async def leave_room(sid, room_name):
     await sio.leave_room(sid, room_name)
@@ -122,15 +102,3 @@ async def leave_room(sid, room_name):
 @sio.event
 async def disconnect(sid):
     print(f"Disconnected : {sid}")
-    # await redis_manager.redis.unsubscribe("socketio", f"LEAVE|{sid}")
-
-
-# 메시지를 Redis에 저장합니다 (옵션).
-# await redis_client.lrange(f"chat_history_{room_name}", message)
-
-
-# # 채팅 기록 조회
-# @app.get("/history/{room_name}")
-# async def get_history(room_name: str):
-#     history = await redis.lrange(f"messages:{room_name}", 0, -1)
-#     return history
