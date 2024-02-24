@@ -11,7 +11,7 @@ pipeline {
 
         stage('Test') {
           steps {
-            sh 'pwd | ls | whoami'
+            sh 'pwd | ls | whoami | source ~/.bashrc'
           }
         }
 
