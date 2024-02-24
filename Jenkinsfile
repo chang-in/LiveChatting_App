@@ -38,6 +38,6 @@ pipeline {
   }
   environment {
     DOCKER_FRONTEND_VERSION = '1.0'
-    DOCKER_BACKEND_VERSION_VERSION = '1.0'
+    DOCKER_BACKEND_VERSION = '1.0'
   }
 }
