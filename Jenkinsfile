@@ -9,13 +9,13 @@ pipeline {
 
     stage('BE_build') {
       steps {
-        sh 'cd backend; sudo docker buildx build --tag dhckddls12/fastapi_be:1.0 .| echo "build success(BE)"'
+        sh 'cd backend; docker buildx build --tag dhckddls12/fastapi_be:1.0 .| echo "build success(BE)"'
       }
     }
 
     stage('FE_build') {
       steps {
-        sh 'cd frontend; sudo docker buildx build --tag dhckddls12/react_fe:${DOCKER_FRONTEND_VERSION} .| echo "build success(FE)"'
+        sh 'cd frontend; docker buildx build --tag dhckddls12/react_fe:${DOCKER_FRONTEND_VERSION} .| echo "build success(FE)"'
       }
     }
 
