@@ -22,7 +22,7 @@ pipeline {
       parallel {
         stage('BE_build') {
           steps {
-            sh 'cd backend; sudo docker buildx build --tag dhckddls12/fastapi_be:${env.DOCKER_BACKEND_VERSION} .| echo "build success(BE)"'
+            sh 'cd backend; sudo docker buildx build --tag dhckddls12/fastapi_be:1.0 .| echo "build success(BE)"'
           }
         }
 
