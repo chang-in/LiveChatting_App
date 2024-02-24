@@ -15,7 +15,7 @@ pipeline {
 
     stage('FE_build') {
       steps {
-        sh 'cd frontend; sudo docker buildx build --tag dhckddls12/react_fe:${DOCKER_FRONTEND_VERSION} .| echo "build success(FE)"'
+        sh 'cd ..; cd frontend; sudo docker buildx build --tag dhckddls12/react_fe:${DOCKER_FRONTEND_VERSION} .| echo "build success(FE)"'
       }
     }
 
