@@ -12,9 +12,13 @@ RUN /bin/sh -c yarn build
 # Serve stage
 FROM nginx:1.25.1-alpine3.17-slim
 # nginx의 기본 설정을 제거한다.
+RUN rm -rf /etc/nginx/sites-enabled/default
+RUN rm -rf /etc/nginx/sites-available/default
 RUN rm -rf /etc/nginx/conf.d/default.conf
+
 # nginx에 serving할 html의 설정파일을 복사한다.
 COPY nginx.conf /etc/nginx/conf.d
+
 WORKDIR /code/build/
 # 빌드 결과물을 Nginx가 제공할 위치로 복사한다.
 COPY --from=builder /code/build/ .

@@ -17,8 +17,9 @@ RUN pip install -r requirements.txt
 
 RUN rm -rf /etc/nginx/sites-enabled/default
 RUN rm -rf /etc/nginx/sites-available/default
+RUN rm -rf /etc/nginx/conf.d/default.conf
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/
 
 EXPOSE 8000
 
