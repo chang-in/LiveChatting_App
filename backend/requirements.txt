@@ -20,7 +20,7 @@ redis
 simple-websocket
 sniffio
 socketio
-starlette=
+starlette
 typing_extensions
 uvicorn
 wsproto
