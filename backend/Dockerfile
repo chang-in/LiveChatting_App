@@ -1,4 +1,4 @@
-FROM python:3.11.8-slim
+FROM python:3.11.1-slim
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -23,4 +23,4 @@ COPY nginx.conf /etc/nginx/conf.d/
 
 EXPOSE 8000
 
-CMD ["uvicorn", "sockets:app", "--port", "8000", "--reload"]
+CMD ["uvicorn", "sockets:app", "--host", "0.0.0.0", "--port", "8000"]
