@@ -4,6 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 import database
 import datetime as dt
 import json
+import redis as rd
 from aioredis import Redis
 from dotenv import load_dotenv
 import os
