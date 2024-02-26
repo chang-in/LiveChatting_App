@@ -5,12 +5,15 @@ import database
 import datetime as dt
 import json
 import aioredis
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 # import redis as rd
 
 # redis 연결
-url = "redis://localhost:6379"
-redis = aioredis.Redis()
+url = os.getenv("URL")
+redis = aioredis.Redis(url)
 
 # redis_manager = socketio.AsyncRedisManager(url)
 # sio = socketio.AsyncServer(
