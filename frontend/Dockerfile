@@ -1,8 +1,10 @@
 FROM node:lts as builder
+RUN apt-get update
 
 WORKDIR /code
 COPY  . .
-RUN apt-get update && yarn install && yarn build
+RUN yarn install
+RUN yarn build
 
 FROM nginx:1.25.1-alpine3.17-slim
 
