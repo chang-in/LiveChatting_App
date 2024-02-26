@@ -21,7 +21,7 @@ export default function Screen() {
 
   useEffect(() => {
     socketRef.current = io(process.env.REACT_APP_API_URL, {
-      path: process.env.SOCKET_PATH,
+      path: process.env.REACT_APP_SOCKET_PATH,
     });
 
     setCurrentSocket(socketRef.current);
