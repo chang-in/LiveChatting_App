@@ -1,4 +1,3 @@
-# Build stage
 FROM node:lts as builder
 
 WORKDIR /code
