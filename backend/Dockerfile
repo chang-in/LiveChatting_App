@@ -23,4 +23,4 @@ COPY nginx.conf /etc/nginx/conf.d/
 
 EXPOSE 8000
 
-CMD ["uvicorn", "sockets:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "sockets:app", "--port", "8000", "--reload"]
