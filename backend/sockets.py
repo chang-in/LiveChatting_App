@@ -4,8 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 import database
 import datetime as dt
 import json
-import redis as rd
-from aioredis import Redis
+from redis import asyncio as aioredis
 from dotenv import load_dotenv
 import os
 
@@ -14,7 +13,7 @@ load_dotenv()
 
 # redis 연결
 # url = os.getenv("URL")
-redis = Redis(host=os.getenv("host"), port=6379)
+redis = aioredis.Redis(host=os.getenv("host"), port=6379)
 
 # redis_manager = socketio.AsyncRedisManager(url)
 # sio = socketio.AsyncServer(
