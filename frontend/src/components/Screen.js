@@ -27,7 +27,7 @@ export default function Screen() {
     setCurrentSocket(socketRef.current);
 
     socketRef.current.on("connect", (data) => {
-      // console.log("서버와 연결");
+      console.log("서버와 연결");
     });
 
     return () => {
