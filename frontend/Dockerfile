@@ -3,7 +3,7 @@ FROM node:lts as builder
 WORKDIR /code
 
 # Install dependencies
-COPY package*.json ./
+COPY package.json ./
 COPY yarn.lock ./
 RUN yarn install --silent
 
