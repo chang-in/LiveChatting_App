@@ -3,9 +3,5 @@ import { useStore } from "../utils/store";
 
 export default function Sidebar() {
   const { roomdata } = useStore();
-  return (
-    <div>
-      {/* <Link to={`/history/${roomdata}`}>{roomdata}번 채팅방 이동</Link> */}
-    </div>
-  );
+  return <div>광고 자리</div>;
 }

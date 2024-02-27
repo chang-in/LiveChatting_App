@@ -8,7 +8,7 @@ export default function Structure({ sidebarcontent, maincontent }) {
   return (
     <Flex gap="middle" wrap="wrap">
       <Layout className="App">
-        <Header className="header">Header</Header>
+        <Header className="header"></Header>
         <Layout>
           <Sider
             trigger={null}
@@ -30,7 +30,7 @@ export default function Structure({ sidebarcontent, maincontent }) {
             {sidebarcontent}
           </Sider>
         </Layout>
-        <Footer className="footer">Footer</Footer>
+        <Footer className="footer"></Footer>
       </Layout>
     </Flex>
   );
