@@ -1,19 +1,26 @@
+# Builder stage
 FROM node:lts as builder
-RUN apt-get update
-
 WORKDIR /code
-COPY  . .
-RUN yarn install
+
+# Install dependencies
+COPY package*.json ./
+COPY yarn.lock ./
+RUN yarn install --silent
+
+# Copy source files and build
+COPY . .
 RUN yarn build
 
+# Final stage
 FROM nginx:1.25.1-alpine3.17-slim
+WORKDIR /usr/share/nginx/html
 
-RUN rm -rf /etc/nginx/sites-enabled/default
-RUN rm -rf /etc/nginx/sites-available/default
-RUN rm -rf /etc/nginx/conf.d/default.conf
+# Remove default nginx configuration files and copy built assets
+RUN rm -rf /etc/nginx/sites-enabled/default \
+    && rm -rf /etc/nginx/sites-available/default \
+    && rm -rf /etc/nginx/conf.d/default.conf
 
-WORKDIR /code/
-COPY --from=builder /code .
+COPY --from=builder /code/build .
 COPY nginx.conf /etc/nginx/conf.d
 
 EXPOSE 3000
