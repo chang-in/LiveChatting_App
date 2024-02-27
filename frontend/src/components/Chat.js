@@ -57,7 +57,7 @@ export default function Chat({ isChatting, setIsChatting }) {
       <div className="content">
         {messages.map((msg, index) => {
           const regex =
-            /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+            /(?:http:|https:)?(\/\/)?(www\.)?(youtube.com|youtu.be|youtube-nocookie)\/(watch|embed)?(\?v=|\/)?([a-zA-Z0-9_-]{11})?/g;
           const current = msg.message.match(regex);
           if (current) {
             return (
