@@ -13,14 +13,14 @@ RUN yarn build
 
 # Final stage
 FROM nginx:1.25.1-alpine3.17-slim
-WORKDIR /usr/share/nginx/html
 
 # Remove default nginx configuration files and copy built assets
 RUN rm -rf /etc/nginx/sites-enabled/default \
     && rm -rf /etc/nginx/sites-available/default \
     && rm -rf /etc/nginx/conf.d/default.conf
 
-COPY --from=builder /code/build .
+WORKDIR /code/
+COPY --from=builder /code .
 COPY nginx.conf /etc/nginx/conf.d
 
 EXPOSE 3000
