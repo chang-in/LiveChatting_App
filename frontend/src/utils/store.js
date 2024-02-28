@@ -9,4 +9,6 @@ export const useStore = create((set) => ({
   setCurrentSocket: (newSocket) => set({ currentsocket: newSocket }),
   currentsid: null,
   setCurrentSid: (newsid) => set({ currentsid: newsid }),
+  messaging: "",
+  setMessaging: (newmessage) => set({ messaging: newmessage }),
 }));

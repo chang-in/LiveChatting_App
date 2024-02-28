@@ -13,6 +13,7 @@ export default function Chat({ isChatting, setIsChatting }) {
     setRandom,
     roomdata,
     setroomdata,
+    messaging,
   } = useStore();
 
   const joinNewRoom = () => {
@@ -55,13 +56,14 @@ export default function Chat({ isChatting, setIsChatting }) {
   return (
     <>
       <div className="content">
+        {<div>{messaging ? <span>{messaging}</span> : null}</div>}
         {messages.map((msg, index) => {
           const regex =
             /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
           const current = msg.message.match(regex);
           if (current) {
             return (
-              <div
+              <span
                 key={index}
                 className={msg.sender === currentsocket.id ? "나" : "상대"}
               >
@@ -74,7 +76,7 @@ export default function Chat({ isChatting, setIsChatting }) {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; "
                   allowFullScreen
                 ></iframe>
-              </div>
+              </span>
             );
           } else {
             return (

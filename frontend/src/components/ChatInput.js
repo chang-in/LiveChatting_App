@@ -13,6 +13,8 @@ export default function ChatInput({ isChatting, setIsChatting }) {
     setRandom,
     roomdata,
     setroomdata,
+    setMessaging,
+    messaging,
   } = useStore();
 
   const scrollToBottom = () => {
@@ -28,6 +30,7 @@ export default function ChatInput({ isChatting, setIsChatting }) {
       message: chat,
       timestamp: timestamp,
     });
+    setMessaging("");
     form.resetFields();
     scrollToBottom();
   };
@@ -41,9 +44,11 @@ export default function ChatInput({ isChatting, setIsChatting }) {
               <Input
                 onChange={(e) => {
                   e.target.value
-                    ? setMessage("입력중...")
-                    : setMessage("채팅을 입력하세요");
+                    ? setMessaging("입력 중...")
+                    : setMessaging("");
+                  // console.log(e.target);
                 }}
+                placeholder="채팅을 입력하세요"
               />
             </Form.Item>
           </Col>
