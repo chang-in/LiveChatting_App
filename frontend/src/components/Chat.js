@@ -27,7 +27,7 @@ export default function Chat({ isChatting, setIsChatting }) {
     if (isChatting) {
       currentsocket.emit("join_room", random);
 
-      const alertListener = (data) => console.log(data);
+      const alertListener = (data) => random + "입장 완료.";
       currentsocket.on("alert", alertListener);
 
       const errorListener = (data) => {

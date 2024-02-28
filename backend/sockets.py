@@ -65,7 +65,7 @@ async def join_room(sid, room_name):
         await sio.enter_room(sid, room_name)
         print(f"Enter room {room_name}, {sid}")
         await redis.lpush(f"room:{room_name}:users", sid)
-        await sio.emit("alert", f"방 입장 완료: {room_name}")
+        await sio.emit("alert", f"방 입장 완료: {room_name}, {sid}")
 
 
 @sio.event
