@@ -39,7 +39,7 @@ export default function Chat({ isChatting, setIsChatting }) {
       currentsocket.on("error", errorListener);
 
       const messageListener = (data) => {
-        console.log(data);
+        // console.log(data);
         setMessages((prev) => [...prev, data]);
       };
       currentsocket.on("room_message_data", messageListener);
