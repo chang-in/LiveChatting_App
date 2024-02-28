@@ -81,7 +81,8 @@ async def room_message(sid, data):
     # messages[currentroom].append(new_message)
 
     await redis.rpush(
-        f"messages:{currentroom}", json.dumps(new_message, ensure_ascii=False)
+        f"messages:{currentroom}",
+        json.dumps(new_message, ensure_ascii=False, encoding="utf-8"),
     )
 
     await sio.emit("room_message_data", new_message, room=currentroom)
