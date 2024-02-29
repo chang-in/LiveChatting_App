@@ -10,7 +10,7 @@ pipeline {
 
         stage('Build') { // 빌드 단계
             steps {
-                sh 'echo "hello' // Maven을 사용하여 프로젝트를 빌드합니다.
+                sh 'echo "hello"' // Maven을 사용하여 프로젝트를 빌드합니다.
             }
         }
 
