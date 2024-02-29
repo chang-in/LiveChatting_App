@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('start') {
       steps {
-        sh 'echo "hello"'
+        git(url: 'https://github.com/mangji12/DevOpsChatApp.git', branch: 'main')
       }
     }
 
