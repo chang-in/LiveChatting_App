@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') { // 체크아웃 단계
             steps {
-                git url : "https://github.com/mangji12/DevOpsChatApp.git", branch : "main", credentialsId : "	Iv1.7d02dda54a71491e" 
+                git url : "https://github.com/mangji12/DevOpsChatApp.git", branch : "main"
             }
         }
 
