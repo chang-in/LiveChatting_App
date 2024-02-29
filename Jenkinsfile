@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('start') {
       steps {
-        git(url: 'https://github.com/mangji12/DevOpsChatApp.git', branch: 'main')
+        git(url: 'https://github.com/mangji12/DevOpsChatApp.git', branch: 'main', credentialsId: 'github')
       }
     }
 
