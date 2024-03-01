@@ -13,7 +13,7 @@ load_dotenv()
 
 # redis 연결
 # url = os.getenv("URL")
-redis = aioredis.Redis(host=os.getenv("host"), port=6379)
+redis = aioredis.Redis(host=os.getenv("redis_host"), port=os.getenv("redis_port"))
 
 # redis_manager = socketio.AsyncRedisManager(url)
 # sio = socketio.AsyncServer(
@@ -29,7 +29,10 @@ app.mount("/", app=socket_app)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 허용할 출처 목록
+    allow_origins=[
+        "http://localhost:8000",
+        os.getenv("host") + ":8000",
+    ],  # 허용할 출처 목록
     allow_credentials=True,
     allow_methods=["*"],  # 모든 HTTP 메소드 허용
     allow_headers=["*"],  # 모든 HTTP 헤더 허용
@@ -37,8 +40,6 @@ app.add_middleware(
 
 
 # `socket.io` 이벤트 핸들러
-
-
 # 서버와 소켓 연결 (대기상태로 만들기)
 @sio.event
 async def connect(sid, environ):
