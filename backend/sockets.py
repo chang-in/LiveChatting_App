@@ -13,7 +13,8 @@ load_dotenv()
 
 # redis 연결
 # url = os.getenv("URL")
-redis = aioredis.Redis(host=os.getenv("redis_host"), port=os.getenv("redis_port"))
+redis = aioredis.Redis()
+# host=os.getenv("redis_host"), port=os.getenv("redis_port")
 
 # redis_manager = socketio.AsyncRedisManager(url)
 # sio = socketio.AsyncServer(
