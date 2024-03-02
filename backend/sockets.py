@@ -32,7 +32,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:8000",
         os.getenv("host") + ":8000",
-        "172.18.0.3:8000",
+        "http://172.18.0.3:8000",
+        "http://13.124.221.180:8000",
     ],  # 허용할 출처 목록
     allow_credentials=True,
     allow_methods=["*"],  # 모든 HTTP 메소드 허용
