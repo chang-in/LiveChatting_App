@@ -1,7 +1,6 @@
 import socketio
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-import database
 import datetime as dt
 import json
 from redis import asyncio as aioredis
@@ -9,22 +8,19 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-# import redis as rd
 
 # redis 연결
-# url = os.getenv("URL")
 redis = aioredis.Redis(host=os.getenv("redis_host"), port=os.getenv("redis_port"))
+redis_manager = socketio.AsyncRedisManager()
 
-# redis_manager = socketio.AsyncRedisManager(url)
-# sio = socketio.AsyncServer(
-#     async_mode="asgi", cors_allowed_origins=[], client_manager=redis_manager
-# )
+sio = socketio.AsyncServer(
+    async_mode="asgi", cors_allowed_origins=[], client_manager=redis_manager
+)
 
-sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins=[])
 # socket.io 서버 생성
 app = FastAPI()
 socket_app = socketio.ASGIApp(socketio_server=sio, socketio_path="sockets")
-app.mount("/", app=socket_app)
+app.mount("/sockets", app=socket_app)
 
 
 app.add_middleware(
@@ -43,7 +39,7 @@ async def connect(sid, environ):
     print(f"Socket connected : {sid}")
 
 
-# # 배열이면 반복문 사용해야함
+# 배열이면 반복문 사용해야함
 roomid = None
 decode_room = None
 
@@ -76,7 +72,6 @@ async def room_message(sid, data):
 
     timestamp = dt.datetime.now().isoformat()
     new_message = {"sender": sid, "message": message, "timestamp": timestamp}
-    # messages[currentroom].append(new_message)
 
     await redis.rpush(
         f"messages:{currentroom}",
