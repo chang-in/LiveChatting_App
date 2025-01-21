@@ -15,6 +15,7 @@ export default function Screen() {
     currentsocket,
     setCurrentSocket,
   } = useStore();
+  
   const socketRef = useRef();
 
   const [isChatting, setIsChatting] = useState(false); // start <-> leave
