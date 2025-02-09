@@ -1,10 +1,20 @@
 from fastapi import FastAPI
 import socketio
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 
 # create a Socket.IO server
-sio = socketio.AsyncServer()
+# sio = socketio.AsyncServer()
+sio = socketio.AsyncServer(cors_allowed_origins=["https://jubilant-fishstick-wxq67v5j9vrf5xqr-3000.app.github.dev"])
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://jubilant-fishstick-wxq67v5j9vrf5xqr-3000.app.github.dev"],  # React 앱의 URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # FastAPI에 대한 라우팅 설정
 @app.get("/")
