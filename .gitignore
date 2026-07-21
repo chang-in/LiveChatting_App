@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# 백엔드 환경변수 (프런트 .env는 CRA 관례상 공개 빌드설정이라 추적 유지)
+backend/.env
+
+# macOS / IDE
+.DS_Store
+.idea/
